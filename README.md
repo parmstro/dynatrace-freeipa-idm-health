@@ -14,6 +14,16 @@ A Dynatrace Extensions Framework 2.0 (EF2) Python extension for monitoring FreeI
 
 The extension includes a pre-built overview dashboard and custom topology entities (FreeIPA Server, Replication Agreement) in Dynatrace.
 
+### Dashboard Preview
+
+Service Health honeycomb with real-time UP/DOWN detection, Bind Security Errors, and LDAP Performance metrics:
+
+![Dashboard — Service Health and LDAP Performance](docs/images/Dynatrace_RHIdM_Default_Dashboard1.png)
+
+DNS gauges, SRV record validation, certificate expiry tracking, and total tracked certificates:
+
+![Dashboard — DNS and Certificates](docs/images/Dynatrace_RHIdM_Default_Dashboard2.png)
+
 ---
 
 ## Prerequisites
