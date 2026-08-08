@@ -1,0 +1,53 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.whl
+extension/lib/
+secrets.json
+ca.key
+ca.pem
+developer.pem
+*.zip
+*.sig
+.eggs/
+
+# VS Code
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+# Dynatrace Extensions builds & configs
+dist
+config
+logs
+
+# Secrets and credentials
+connection.properties
+developer.key
+developer_fused.pem
+*.keytab
+activation.json
+secrets.json
+
+# Dynatrace installers and certs
+Dynatrace-ActiveGate-*.sh
+dt-root.cert.pem*
+
+# Python
+*.log
+*.py[cod]
+*.egg-info
+__pycache__
+build
+.env
+.venv
+env/

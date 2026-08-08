@@ -1,0 +1,793 @@
+{
+  "tiles": {
+    "0": {
+      "content": "## Red Hat Identity Management Health Overview",
+      "type": "markdown"
+    },
+    "1": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries value = avg(custom.freeipa.idm.service.status), by: {service.name} | fieldsAdd status = if(arrayLast(value) == 1, \"UP\", else: \"DOWN\") | fields service.name, status",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Service Health",
+      "type": "data",
+      "visualization": "honeycomb",
+      "visualizationSettings": {
+        "autoSelectVisualization": false,
+        "coloring": {
+          "colorRules": [
+            {
+              "colorMode": "color-palette",
+              "colorPalette": "apdex",
+              "comparator": "=",
+              "field": "status",
+              "type": "string",
+              "value": "UP"
+            },
+            {
+              "colorMode": "color-palette",
+              "colorPalette": "fireplace",
+              "comparator": "=",
+              "field": "status",
+              "type": "string",
+              "value": "DOWN"
+            }
+          ]
+        },
+        "honeycomb": {
+          "dataMappings": {
+            "value": "status"
+          },
+          "displayedFields": [
+            "service.name"
+          ],
+          "labels": {
+            "showLabels": true
+          },
+          "legend": {
+            "hidden": true,
+            "position": "right"
+          },
+          "max": {
+            "mode": "custom",
+            "value": 1
+          },
+          "min": {
+            "mode": "custom"
+          }
+        }
+      }
+    },
+    "2": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.ldap.bind_security_errors), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Bind Security Errors",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "3": {
+      "content": "---\n## LDAP Performance",
+      "type": "markdown"
+    },
+    "4": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.ldap.current_connections), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "LDAP Active Connections",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "5": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.ldap.ops_completed), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "LDAP Operations Completed",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "6": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio), by: {ldap.backend}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Entry Cache Hit Ratio",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "7": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries threads = avg(custom.freeipa.idm.ldap.threads), readWaiters = avg(custom.freeipa.idm.ldap.read_waiters), maxThreadConns = avg(custom.freeipa.idm.ldap.connections_at_maxthreads), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Thread Saturation",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "8": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.ldap.bytes_sent), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "LDAP Bytes Sent",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "9": {
+      "content": "---\n## Replication",
+      "type": "markdown"
+    },
+    "10": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.replication.status), by: {replication.agreement}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Replication Status",
+      "type": "data",
+      "visualization": "table",
+      "visualizationSettings": {}
+    },
+    "11": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.replication.lag_seconds), by: {replication.agreement}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Replication Lag",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
+    "12": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries value = avg(custom.freeipa.idm.replication.conflict_entries) | fields latest = round(arrayLast(value))",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Replication Conflicts",
+      "type": "data",
+      "visualization": "gauge",
+      "visualizationSettings": {
+        "autoSelectVisualization": false,
+        "coloring": {
+          "colorRules": [
+            {
+              "color": "var(--dt-colors-charts-loglevel-notice-default, #2a7453)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 2
+            },
+            {
+              "color": "var(--dt-colors-charts-loglevel-warning-default, #a9780f)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 10
+            },
+            {
+              "color": "var(--dt-colors-charts-loglevel-error-default, #cd3741)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 20
+            },
+            {
+              "color": "var(--dt-colors-charts-loglevel-emergency-default, #ae132d)",
+              "colorMode": "single-color",
+              "comparator": ">",
+              "field": "latest",
+              "type": "double",
+              "value": 20
+            }
+          ]
+        },
+        "icon": {
+          "icon": "LinkBrokenIcon"
+        },
+        "unitsOverrides": [
+          {
+            "added": 1786153909072,
+            "baseUnit": "none",
+            "cascade": null,
+            "decimals": 0,
+            "delimiter": false,
+            "displayUnit": null,
+            "identifier": "latest",
+            "suffix": "",
+            "unitCategory": "unspecified"
+          }
+        ]
+      }
+    },
+    "13": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries value = avg(custom.freeipa.idm.dns.zone_count) | fields latest = round(arrayLast(value))",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "DNS Zone Count",
+      "type": "data",
+      "visualization": "gauge",
+      "visualizationSettings": {
+        "autoSelectVisualization": false,
+        "coloring": {
+          "colorRules": [
+            {
+              "color": "var(--dt-colors-charts-apdex-excellent-default, #2a7453)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 25
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-good-default, #1c520a)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 50
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-fair-default, #a9780f)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 75
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-poor-default, #d56b1a)",
+              "colorMode": "single-color",
+              "comparator": ">",
+              "field": "latest",
+              "type": "double",
+              "value": 75
+            }
+          ]
+        },
+        "icon": {
+          "icon": "IPaddressIcon"
+        },
+        "unitsOverrides": [
+          {
+            "added": 1786153546173,
+            "baseUnit": "none",
+            "cascade": null,
+            "decimals": 0,
+            "delimiter": false,
+            "displayUnit": null,
+            "identifier": "latest",
+            "suffix": "",
+            "unitCategory": "unspecified"
+          }
+        ]
+      }
+    },
+    "14": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.dns.srv_record_valid), by: {dns.srv_type}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "DNS SRV Record Validity",
+      "type": "data",
+      "visualization": "table",
+      "visualizationSettings": {
+        "table": {
+          "columnTypeOverrides": [
+            {
+              "disableRemoval": false,
+              "fields": [
+                "avg(custom.freeipa.idm.dns.srv_record_valid)"
+              ],
+              "id": 1786152230423,
+              "value": "sparkline"
+            }
+          ]
+        }
+      }
+    },
+    "19": {
+      "content": "---\n## DNS",
+      "type": "markdown"
+    },
+    "15": {
+      "content": "---\n## Certificates",
+      "type": "markdown"
+    },
+    "16": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries avg(custom.freeipa.idm.cert.days_until_expiry), by: {cert.subject}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Certificate Days Until Expiry",
+      "type": "data",
+      "visualization": "table",
+      "visualizationSettings": {
+        "table": {
+          "columnTypeOverrides": [
+            {
+              "disableRemoval": false,
+              "fields": [
+                "avg(custom.freeipa.idm.cert.days_until_expiry)"
+              ],
+              "id": 1786152244707,
+              "value": "sparkline"
+            }
+          ]
+        }
+      }
+    },
+    "18": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries value = sum(custom.freeipa.idm.dns.record_count) | fields latest = round(arrayLast(value))",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "DNS Record Count",
+      "type": "data",
+      "visualization": "gauge",
+      "visualizationSettings": {
+        "autoSelectVisualization": false,
+        "coloring": {
+          "colorRules": [
+            {
+              "color": "var(--dt-colors-charts-apdex-excellent-default, #2a7453)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 250
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-good-default, #1c520a)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 500
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-fair-default, #a9780f)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 750
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-poor-default, #d56b1a)",
+              "colorMode": "single-color",
+              "comparator": ">",
+              "field": "latest",
+              "type": "double",
+              "value": 750
+            }
+          ]
+        },
+        "icon": {
+          "icon": "IPaddressIcon"
+        },
+        "unitsOverrides": [
+          {
+            "added": 1786153546173,
+            "baseUnit": "none",
+            "cascade": null,
+            "decimals": 0,
+            "delimiter": false,
+            "displayUnit": null,
+            "identifier": "latest",
+            "suffix": "",
+            "unitCategory": "unspecified"
+          }
+        ],
+        "valueBoundaries": {
+          "max": {
+            "mode": "custom",
+            "value": 1000
+          }
+        }
+      }
+    },
+    "17": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries value = avg(custom.freeipa.idm.cert.total_tracked) | fields latest = round(arrayLast(value))",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "Total Tracked Certificates",
+      "type": "data",
+      "visualization": "gauge",
+      "visualizationSettings": {
+        "autoSelectVisualization": false,
+        "coloring": {
+          "colorRules": [
+            {
+              "color": "var(--dt-colors-charts-apdex-excellent-default, #2a7453)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 250
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-good-default, #1c520a)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 500
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-fair-default, #a9780f)",
+              "colorMode": "single-color",
+              "comparator": "≤",
+              "field": "latest",
+              "type": "double",
+              "value": 750
+            },
+            {
+              "color": "var(--dt-colors-charts-apdex-poor-default, #d56b1a)",
+              "colorMode": "single-color",
+              "comparator": ">",
+              "field": "latest",
+              "type": "double",
+              "value": 750
+            }
+          ]
+        },
+        "icon": {
+          "icon": "CertifiedIcon"
+        },
+        "unitsOverrides": [
+          {
+            "added": 1786153792425,
+            "baseUnit": "none",
+            "cascade": null,
+            "decimals": 0,
+            "delimiter": false,
+            "displayUnit": null,
+            "identifier": "latest",
+            "suffix": "",
+            "unitCategory": "unspecified"
+          }
+        ],
+        "valueBoundaries": {
+          "max": {
+            "mode": "custom",
+            "value": 1000
+          }
+        }
+      }
+    }
+  },
+  "variables": [],
+  "annotations": [],
+  "settings": {},
+  "layouts": {
+    "0": {
+      "h": 2,
+      "w": 24,
+      "x": 0,
+      "y": 0
+    },
+    "1": {
+      "h": 6,
+      "w": 11,
+      "x": 0,
+      "y": 2
+    },
+    "2": {
+      "h": 6,
+      "w": 12,
+      "x": 12,
+      "y": 2
+    },
+    "3": {
+      "h": 2,
+      "w": 24,
+      "x": 0,
+      "y": 8
+    },
+    "4": {
+      "h": 6,
+      "w": 8,
+      "x": 0,
+      "y": 10
+    },
+    "5": {
+      "h": 6,
+      "w": 8,
+      "x": 8,
+      "y": 10
+    },
+    "6": {
+      "h": 6,
+      "w": 8,
+      "x": 16,
+      "y": 10
+    },
+    "7": {
+      "h": 6,
+      "w": 12,
+      "x": 0,
+      "y": 16
+    },
+    "8": {
+      "h": 6,
+      "w": 12,
+      "x": 12,
+      "y": 16
+    },
+    "9": {
+      "h": 2,
+      "w": 24,
+      "x": 0,
+      "y": 22
+    },
+    "10": {
+      "h": 6,
+      "w": 8,
+      "x": 0,
+      "y": 24
+    },
+    "11": {
+      "h": 6,
+      "w": 8,
+      "x": 8,
+      "y": 24
+    },
+    "12": {
+      "h": 6,
+      "w": 8,
+      "x": 16,
+      "y": 24
+    },
+    "19": {
+      "h": 2,
+      "w": 24,
+      "x": 0,
+      "y": 30
+    },
+    "13": {
+      "h": 6,
+      "w": 8,
+      "x": 0,
+      "y": 32
+    },
+    "18": {
+      "h": 6,
+      "w": 8,
+      "x": 8,
+      "y": 32
+    },
+    "14": {
+      "h": 6,
+      "w": 8,
+      "x": 16,
+      "y": 32
+    },
+    "15": {
+      "h": 2,
+      "w": 24,
+      "x": 0,
+      "y": 38
+    },
+    "16": {
+      "h": 6,
+      "w": 12,
+      "x": 0,
+      "y": 40
+    },
+    "17": {
+      "h": 6,
+      "w": 12,
+      "x": 12,
+      "y": 40
+    }
+  },
+  "version": 21
+}

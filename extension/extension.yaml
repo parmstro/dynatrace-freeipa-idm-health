@@ -1,0 +1,589 @@
+name: custom:freeipa-idm-health
+version: 1.0.39
+minDynatraceVersion: 1.343.0
+author:
+  name: "Paul Armstrong (Red Hat)"
+python:
+  runtime:
+    module: freeipa_idm_health
+    version:
+      min: "3.10"
+  activation:
+    remote:
+      path: activationSchema.json
+  featureSets:
+    - featureSet: default
+      metrics:
+        - key: custom.freeipa.idm.service.status
+        - key: custom.freeipa.idm.ldap.current_connections
+        - key: custom.freeipa.idm.ldap.total_connections
+        - key: custom.freeipa.idm.ldap.connections_at_maxthreads
+        - key: custom.freeipa.idm.ldap.ops_initiated
+        - key: custom.freeipa.idm.ldap.ops_completed
+        - key: custom.freeipa.idm.ldap.entries_sent
+        - key: custom.freeipa.idm.ldap.bytes_sent
+        - key: custom.freeipa.idm.ldap.threads
+        - key: custom.freeipa.idm.ldap.read_waiters
+        - key: custom.freeipa.idm.ldap.dtable_size
+        - key: custom.freeipa.idm.ldap.anonymous_binds
+        - key: custom.freeipa.idm.ldap.simple_auth_binds
+        - key: custom.freeipa.idm.ldap.strong_auth_binds
+        - key: custom.freeipa.idm.ldap.bind_security_errors
+        - key: custom.freeipa.idm.ldap.search_ops
+        - key: custom.freeipa.idm.ldap.add_entry_ops
+        - key: custom.freeipa.idm.ldap.modify_entry_ops
+        - key: custom.freeipa.idm.ldap.remove_entry_ops
+        - key: custom.freeipa.idm.ldap.errors
+        - key: custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio
+        - key: custom.freeipa.idm.ldap.backend.entry_cache_count
+        - key: custom.freeipa.idm.ldap.backend.entry_cache_size
+        - key: custom.freeipa.idm.ldap.backend.entry_cache_max_size
+        - key: custom.freeipa.idm.ldap.backend.dn_cache_hit_ratio
+        - key: custom.freeipa.idm.ldap.backend.dn_cache_count
+        - key: custom.freeipa.idm.ldap.backend.dn_cache_size
+        - key: custom.freeipa.idm.replication.status
+        - key: custom.freeipa.idm.replication.lag_seconds
+        - key: custom.freeipa.idm.replication.update_in_progress
+        - key: custom.freeipa.idm.replication.changes_sent
+        - key: custom.freeipa.idm.replication.conflict_entries
+        - key: custom.freeipa.idm.dns.zone_count
+        - key: custom.freeipa.idm.dns.record_count
+        - key: custom.freeipa.idm.dns.srv_record_valid
+        - key: custom.freeipa.idm.cert.days_until_expiry
+        - key: custom.freeipa.idm.cert.status
+        - key: custom.freeipa.idm.cert.total_tracked
+        - key: custom.freeipa.idm.healthcheck.warning_count
+        - key: custom.freeipa.idm.healthcheck.error_count
+        - key: custom.freeipa.idm.healthcheck.critical_count
+        - key: custom.freeipa.idm.healthcheck.total_checks
+
+topology:
+  types:
+    - name: custom:freeipa-server
+      displayName: FreeIPA Server
+      enabled: true
+      rules:
+        - idPattern: freeipa_server_{freeipa.domain}_{freeipa.server}
+          instanceNamePattern: "FreeIPA {freeipa.server}"
+          iconPattern: server
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(custom.freeipa.idm)
+          attributes:
+            - key: freeipa_domain
+              displayName: IPA Domain
+              pattern: "{freeipa.domain}"
+            - key: freeipa_server_fqdn
+              displayName: Server FQDN
+              pattern: "{freeipa.server}"
+
+    - name: custom:freeipa-replication-agreement
+      displayName: FreeIPA Replication Agreement
+      enabled: true
+      rules:
+        - idPattern: freeipa_repl_{freeipa.domain}_{replication.agreement}
+          instanceNamePattern: "Replication: {replication.agreement}"
+          iconPattern: connection
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(custom.freeipa.idm.replication)
+          attributes:
+            - key: replication_target
+              displayName: Replica Host
+              pattern: "{replication.replica_host}"
+            - key: replication_suffix
+              displayName: Suffix
+              pattern: "{replication.suffix}"
+
+metrics:
+  - key: custom.freeipa.idm.service.status
+    metadata:
+      displayName: Service Status
+      description: "FreeIPA service running status (1=running, 0=stopped)"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.current_connections
+    metadata:
+      displayName: LDAP Current Connections
+      description: "Number of currently open LDAP connections"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.total_connections
+    metadata:
+      displayName: LDAP Total Connections
+      description: "Total LDAP connections since server start"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.connections_at_maxthreads
+    metadata:
+      displayName: LDAP Connections at Max Threads
+      description: "Connections currently at max threads (saturation indicator)"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.ops_initiated
+    metadata:
+      displayName: LDAP Operations Initiated
+      description: "Total LDAP operations initiated since start"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.ops_completed
+    metadata:
+      displayName: LDAP Operations Completed
+      description: "Total LDAP operations completed since start"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.entries_sent
+    metadata:
+      displayName: LDAP Entries Sent
+      description: "Total entries returned to clients since start"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.bytes_sent
+    metadata:
+      displayName: LDAP Bytes Sent
+      description: "Total bytes sent to clients since start"
+      unit: Byte
+  - key: custom.freeipa.idm.ldap.threads
+    metadata:
+      displayName: LDAP Worker Threads
+      description: "Current number of worker threads"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.read_waiters
+    metadata:
+      displayName: LDAP Read Waiters
+      description: "Threads waiting on read from client"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.dtable_size
+    metadata:
+      displayName: LDAP File Descriptor Table Size
+      description: "File descriptors available for connections"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.anonymous_binds
+    metadata:
+      displayName: LDAP Anonymous Binds
+      description: "Count of anonymous bind operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.simple_auth_binds
+    metadata:
+      displayName: LDAP Simple Auth Binds
+      description: "Count of simple (password) bind operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.strong_auth_binds
+    metadata:
+      displayName: LDAP Strong Auth Binds
+      description: "Count of SASL/Kerberos bind operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.bind_security_errors
+    metadata:
+      displayName: LDAP Bind Security Errors
+      description: "Count of failed bind attempts"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.search_ops
+    metadata:
+      displayName: LDAP Search Operations
+      description: "Count of search operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.add_entry_ops
+    metadata:
+      displayName: LDAP Add Operations
+      description: "Count of add entry operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.modify_entry_ops
+    metadata:
+      displayName: LDAP Modify Operations
+      description: "Count of modify entry operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.remove_entry_ops
+    metadata:
+      displayName: LDAP Remove Operations
+      description: "Count of remove entry operations"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.errors
+    metadata:
+      displayName: LDAP Errors
+      description: "Total LDAP errors"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio
+    metadata:
+      displayName: LDAP Entry Cache Hit Ratio
+      description: "Entry cache hit ratio per database backend"
+      unit: Percent
+  - key: custom.freeipa.idm.ldap.backend.entry_cache_count
+    metadata:
+      displayName: LDAP Entry Cache Count
+      description: "Entries currently in cache"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.backend.entry_cache_size
+    metadata:
+      displayName: LDAP Entry Cache Size
+      description: "Current entry cache size in bytes"
+      unit: Byte
+  - key: custom.freeipa.idm.ldap.backend.entry_cache_max_size
+    metadata:
+      displayName: LDAP Entry Cache Max Size
+      description: "Maximum configured entry cache size"
+      unit: Byte
+  - key: custom.freeipa.idm.ldap.backend.dn_cache_hit_ratio
+    metadata:
+      displayName: LDAP DN Cache Hit Ratio
+      description: "DN cache hit ratio per database backend"
+      unit: Percent
+  - key: custom.freeipa.idm.ldap.backend.dn_cache_count
+    metadata:
+      displayName: LDAP DN Cache Count
+      description: "DNs currently in cache"
+      unit: Count
+  - key: custom.freeipa.idm.ldap.backend.dn_cache_size
+    metadata:
+      displayName: LDAP DN Cache Size
+      description: "Current DN cache size in bytes"
+      unit: Byte
+
+  - key: custom.freeipa.idm.replication.status
+    metadata:
+      displayName: Replication Status
+      description: "Replication agreement status code (0=OK)"
+      unit: Count
+  - key: custom.freeipa.idm.replication.lag_seconds
+    metadata:
+      displayName: Replication Lag
+      description: "Replication lag in seconds"
+      unit: Second
+  - key: custom.freeipa.idm.replication.update_in_progress
+    metadata:
+      displayName: Replication Update In Progress
+      description: "Whether replication update is currently running (1=yes, 0=no)"
+      unit: Count
+  - key: custom.freeipa.idm.replication.changes_sent
+    metadata:
+      displayName: Replication Changes Sent
+      description: "Changes replicated since startup"
+      unit: Count
+  - key: custom.freeipa.idm.replication.conflict_entries
+    metadata:
+      displayName: Replication Conflict Entries
+      description: "Number of replication conflict entries"
+      unit: Count
+
+  - key: custom.freeipa.idm.dns.zone_count
+    metadata:
+      displayName: DNS Zone Count
+      description: "Total DNS zones managed by FreeIPA"
+      unit: Count
+  - key: custom.freeipa.idm.dns.record_count
+    metadata:
+      displayName: DNS Record Count
+      description: "DNS records per zone"
+      unit: Count
+  - key: custom.freeipa.idm.dns.srv_record_valid
+    metadata:
+      displayName: DNS SRV Record Valid
+      description: "Expected SRV record present and valid (1=valid, 0=missing)"
+      unit: Count
+
+  - key: custom.freeipa.idm.cert.days_until_expiry
+    metadata:
+      displayName: Certificate Days Until Expiry
+      description: "Days until certificate expires"
+      unit: Count
+  - key: custom.freeipa.idm.cert.status
+    metadata:
+      displayName: Certificate Tracking Status
+      description: "Certificate tracking status (1=MONITORING, 0=other)"
+      unit: Count
+  - key: custom.freeipa.idm.cert.total_tracked
+    metadata:
+      displayName: Total Tracked Certificates
+      description: "Total certificates being tracked by certmonger"
+      unit: Count
+
+  - key: custom.freeipa.idm.healthcheck.warning_count
+    metadata:
+      displayName: Healthcheck Warnings
+      description: "Number of healthcheck warnings"
+      unit: Count
+  - key: custom.freeipa.idm.healthcheck.error_count
+    metadata:
+      displayName: Healthcheck Errors
+      description: "Number of healthcheck errors"
+      unit: Count
+  - key: custom.freeipa.idm.healthcheck.critical_count
+    metadata:
+      displayName: Healthcheck Critical
+      description: "Number of healthcheck critical failures"
+      unit: Count
+  - key: custom.freeipa.idm.healthcheck.total_checks
+    metadata:
+      displayName: Healthcheck Total Checks
+      description: "Total healthcheck tests executed"
+      unit: Count
+
+screens:
+  - entityType: custom:freeipa-server
+    propertiesCard:
+      properties:
+        - type: ATTRIBUTE
+          attribute:
+            key: freeipa_domain
+            displayName: IPA Domain
+        - type: ATTRIBUTE
+          attribute:
+            key: freeipa_server_fqdn
+            displayName: Server FQDN
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - type: CHART_GROUP
+            key: service-status
+          - type: CHART_GROUP
+            key: ldap-performance
+          - type: CHART_GROUP
+            key: ldap-saturation
+          - type: CHART_GROUP
+            key: ldap-cache
+          - type: CHART_GROUP
+            key: replication-health
+          - type: CHART_GROUP
+            key: dns-health
+          - type: CHART_GROUP
+            key: certificates
+          - type: CHART_GROUP
+            key: healthcheck-summary
+    chartsCards:
+      - key: service-status
+        displayName: Service Status
+        mode: NORMAL
+        numberOfVisibleCharts: 1
+        charts:
+          - displayName: Service Health
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.service.status:splitBy(\"service.name\")"
+      - key: ldap-performance
+        displayName: LDAP Performance
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Active Connections
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.current_connections"
+          - displayName: Operations Completed
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.ops_completed"
+          - displayName: Bind Security Errors
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.bind_security_errors"
+      - key: ldap-saturation
+        displayName: LDAP Thread Saturation
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Worker Threads
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.threads"
+          - displayName: Read Waiters
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.read_waiters"
+          - displayName: Connections at Max Threads
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.connections_at_maxthreads"
+      - key: ldap-cache
+        displayName: LDAP Cache Performance
+        mode: NORMAL
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: Entry Cache Hit Ratio
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio:splitBy(\"ldap.backend\")"
+          - displayName: DN Cache Hit Ratio
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.backend.dn_cache_hit_ratio:splitBy(\"ldap.backend\")"
+      - key: replication-health
+        displayName: Replication Health
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Replication Lag
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.replication.lag_seconds:splitBy(\"replication.agreement\")"
+          - displayName: Conflict Entries
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.replication.conflict_entries"
+          - displayName: Changes Sent
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.replication.changes_sent:splitBy(\"replication.agreement\")"
+      - key: dns-health
+        displayName: DNS Health
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Zone Count
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.dns.zone_count"
+          - displayName: Records per Zone
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.dns.record_count:splitBy(\"dns.zone\")"
+          - displayName: SRV Record Validity
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.dns.srv_record_valid:splitBy(\"dns.srv_type\")"
+      - key: certificates
+        displayName: Certificate Expiration
+        mode: NORMAL
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: Days Until Expiry
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.cert.days_until_expiry:splitBy(\"cert.subject\")"
+          - displayName: Total Tracked Certificates
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.cert.total_tracked"
+      - key: healthcheck-summary
+        displayName: Healthcheck Summary
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Critical Issues
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.healthcheck.critical_count"
+          - displayName: Errors
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.healthcheck.error_count"
+          - displayName: Warnings
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.healthcheck.warning_count"
+  - entityType: custom:freeipa-replication-agreement
+    propertiesCard:
+      properties:
+        - type: ATTRIBUTE
+          attribute:
+            key: replication_target
+            displayName: Replica Host
+        - type: ATTRIBUTE
+          attribute:
+            key: replication_suffix
+            displayName: Suffix
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - type: CHART_GROUP
+            key: repl-detail
+    chartsCards:
+      - key: repl-detail
+        displayName: Replication Details
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Replication Lag
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.replication.lag_seconds"
+          - displayName: Status
+            visualizationType: SINGLE_VALUE
+            singleValueConfig:
+              metric:
+                metricSelector: "custom.freeipa.idm.replication.status"
+          - displayName: Changes Sent
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.replication.changes_sent"
+
+documents:
+  dashboards:
+    - displayName: "FreeIPA IdM Health Overview"
+      path: "documents/overview.dashboard.json"

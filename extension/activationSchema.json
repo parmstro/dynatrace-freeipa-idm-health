@@ -1,0 +1,160 @@
+{
+  "types": {
+    "pythonRemote": {
+      "type": "object",
+      "displayName": "FreeIPA Server Endpoint",
+      "summaryPattern": "{hostname}",
+      "properties": {
+        "hostname": {
+          "displayName": "FreeIPA Server FQDN",
+          "description": "Fully qualified domain name of the FreeIPA server (e.g., ipa1.example.com)",
+          "type": "text",
+          "nullable": false,
+          "default": "",
+          "constraints": [{ "type": "NOT_BLANK" }]
+        },
+        "ldap_port": {
+          "displayName": "LDAP Port",
+          "description": "LDAP port. Use 636 for LDAPS or 389 for STARTTLS",
+          "type": "integer",
+          "nullable": false,
+          "default": 636,
+          "constraints": [{ "type": "RANGE", "minimum": 1, "maximum": 65535 }]
+        },
+        "ldap_use_ssl": {
+          "displayName": "Use LDAPS",
+          "description": "Use LDAPS (port 636) instead of STARTTLS (port 389)",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "ldap_bind_dn": {
+          "displayName": "LDAP Bind DN",
+          "description": "Distinguished Name for LDAP bind (e.g., uid=ldap-lookup,cn=users,cn=accounts,dc=example,dc=com). Not required when Kerberos is enabled.",
+          "type": "text",
+          "nullable": true
+        },
+        "ldap_bind_password": {
+          "displayName": "LDAP Bind Password",
+          "description": "Password for the LDAP bind account. Not required when Kerberos is enabled.",
+          "type": "secret",
+          "nullable": true
+        },
+        "ldap_base_dn": {
+          "displayName": "LDAP Base DN",
+          "description": "Base DN for the FreeIPA domain (e.g., dc=example,dc=com)",
+          "type": "text",
+          "nullable": false,
+          "default": "",
+          "constraints": [{ "type": "NOT_BLANK" }]
+        },
+        "ldap_timeout": {
+          "displayName": "LDAP Connection Timeout (seconds)",
+          "description": "Timeout for LDAP connections and operations",
+          "type": "integer",
+          "nullable": false,
+          "default": 10,
+          "constraints": [{ "type": "RANGE", "minimum": 1, "maximum": 120 }]
+        },
+        "ldap_ca_cert_path": {
+          "displayName": "CA Certificate Path",
+          "description": "Path to CA certificate file for LDAPS verification (e.g., /etc/ipa/ca.crt). Leave empty to use system CA store.",
+          "type": "text",
+          "nullable": true
+        },
+        "use_kerberos": {
+          "displayName": "Enable Kerberos Authentication",
+          "description": "Use Kerberos keytab for LDAP GSSAPI bind and IPA JSON-RPC API authentication. When enabled, LDAP bind password is not required.",
+          "type": "boolean",
+          "nullable": false,
+          "default": false
+        },
+        "kerberos_keytab_path": {
+          "displayName": "Kerberos Keytab Path",
+          "description": "Path to keytab file for Kerberos authentication",
+          "type": "text",
+          "nullable": true
+        },
+        "kerberos_principal": {
+          "displayName": "Kerberos Principal",
+          "description": "Kerberos principal to authenticate as (e.g., monitor@EXAMPLE.COM)",
+          "type": "text",
+          "nullable": true
+        },
+        "ipa_api_password": {
+          "displayName": "IPA API Password",
+          "description": "Password for IPA JSON-RPC API authentication (alternative to Kerberos). Uses the same user as the LDAP bind DN uid.",
+          "type": "secret",
+          "nullable": true
+        },
+        "enable_services": {
+          "displayName": "Enable Service Health Monitoring",
+          "description": "Monitor status of FreeIPA services (LDAP, KDC, httpd, CA, DNS)",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_ldap_metrics": {
+          "displayName": "Enable LDAP Performance Metrics",
+          "description": "Collect LDAP performance metrics from cn=monitor",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_replication": {
+          "displayName": "Enable Replication Monitoring",
+          "description": "Monitor replication agreement status, lag, and conflicts",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_dns": {
+          "displayName": "Enable DNS Monitoring",
+          "description": "Monitor DNS zones and SRV records",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_certificates": {
+          "displayName": "Enable Certificate Monitoring",
+          "description": "Monitor certificate expiration and tracking status",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_healthcheck": {
+          "displayName": "Enable ipa-healthcheck Integration",
+          "description": "Run ipa-healthcheck and report results (local/OneAgent mode only)",
+          "type": "boolean",
+          "nullable": false,
+          "default": false
+        },
+        "polling_interval": {
+          "displayName": "Polling Interval (seconds)",
+          "description": "How often to collect metrics. Minimum 60 seconds, recommended 300 for entity keepalive.",
+          "type": "integer",
+          "nullable": false,
+          "default": 300,
+          "constraints": [{ "type": "RANGE", "minimum": 60, "maximum": 3600 }]
+        }
+      }
+    }
+  },
+  "dynatrace": "1",
+  "description": "FreeIPA / Red Hat Identity Management health monitoring configuration",
+  "schemaId": "python-extension.freeipa-idm-health.activation",
+  "displayName": "FreeIPA IdM Health Monitor",
+  "ownerProductManagement": "FreeIPA IdM Health",
+  "ownerDevelopment": "FreeIPA IdM Health",
+  "maturity": "GENERAL_AVAILABILITY",
+  "allowedScopes": ["environment"],
+  "multiObject": true,
+  "properties": {
+    "pythonRemote": {
+      "displayName": "FreeIPA Server Configuration",
+      "type": {
+        "$ref": "#/types/pythonRemote"
+      }
+    }
+  }
+}

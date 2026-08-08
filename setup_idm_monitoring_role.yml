@@ -1,0 +1,89 @@
+---
+- name: Configure IdM monitoring role for Dynatrace extension
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ipaadmin_principal: admin
+    monitoring_privilege: "IdM Monitoring"
+    monitoring_role: "IdM Monitor"
+    monitoring_user: "ldap-lookup"
+    monitoring_user_dn: "uid={{ monitoring_user }},cn=users,cn=accounts,{{ idm_base_dn }}"
+    idm_server: "{{ idm_hostname }}"
+    monitoring_permissions:
+      - "Read Replication Agreements"
+      - "System: Read DNS Entries"
+    backend_cache_aci: >-
+      (targetattr = "*")
+      (version 3.0; acl "IdM Monitoring read backend cache";
+      allow (read, search, compare)
+      userdn = "ldap:///{{ monitoring_user_dn }}";)
+
+  vars_prompt:
+    - name: idm_hostname
+      prompt: "Enter IdM server FQDN (e.g. idm1.example.com)"
+      private: false
+
+    - name: idm_base_dn
+      prompt: "Enter LDAP base DN (e.g. dc=example,dc=com)"
+      private: false
+
+    - name: ipaadmin_password
+      prompt: "Enter IPA admin password"
+      private: true
+
+    - name: dm_password
+      prompt: "Enter Directory Manager password"
+      private: true
+
+  tasks:
+    - name: Create monitoring privilege
+      redhat.rhel_idm.ipaprivilege:
+        ipaadmin_principal: "{{ ipaadmin_principal }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ monitoring_privilege }}"
+        description: "Read-only access for Dynatrace IdM health monitoring"
+        state: present
+
+    - name: Add permissions to monitoring privilege
+      redhat.rhel_idm.ipaprivilege:
+        ipaadmin_principal: "{{ ipaadmin_principal }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ monitoring_privilege }}"
+        permission: "{{ monitoring_permissions }}"
+        action: member
+
+    - name: Create monitoring role
+      redhat.rhel_idm.iparole:
+        ipaadmin_principal: "{{ ipaadmin_principal }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ monitoring_role }}"
+        description: "Role for Dynatrace IdM health monitoring extension"
+        state: present
+
+    - name: Add privilege to monitoring role
+      redhat.rhel_idm.iparole:
+        ipaadmin_principal: "{{ ipaadmin_principal }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ monitoring_role }}"
+        privilege: "{{ monitoring_privilege }}"
+        action: member
+
+    - name: Add monitoring user to role
+      redhat.rhel_idm.iparole:
+        ipaadmin_principal: "{{ ipaadmin_principal }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ monitoring_role }}"
+        user: "{{ monitoring_user }}"
+        action: member
+
+    - name: Add backend cache monitoring ACI
+      community.general.ldap_attrs:
+        server_uri: "ldaps://{{ idm_server }}:636"
+        bind_dn: "cn=Directory Manager"
+        bind_pw: "{{ dm_password }}"
+        validate_certs: true
+        dn: "cn=ldbm database,cn=plugins,cn=config"
+        attributes:
+          aci: "{{ backend_cache_aci }}"
+        state: present
