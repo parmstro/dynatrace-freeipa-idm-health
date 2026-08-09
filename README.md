@@ -421,4 +421,4 @@ freeipa_idm_health/
 
 ## License
 
-This extension is provided as-is for monitoring FreeIPA / Red Hat Identity Management environments with Dynatrace.
+This project is licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for the full text.
