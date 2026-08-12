@@ -6,7 +6,7 @@ A Dynatrace Extensions Framework 2.0 (EF2) Python extension for monitoring FreeI
 
 | Feature | Metrics | Source |
 |---|---|---|
-| **Service Health** | Status of 7 FreeIPA services (LDAP, KDC, kadmin, httpd, CA, DNS, certmonger) | Protocol-level probes ([design rationale](SERVICE_HEALTH_DESIGN.md)) |
+| **Service Health** | Status of 7 FreeIPA services (LDAP, KDC, kadmin, httpd, CA, DNS, certmonger) | Protocol-level probes ([design rationale](documentation/SERVICE_HEALTH_DESIGN.md)) |
 | **LDAP Performance** | Connections, operations, threads, bytes sent, bind errors, cache hit ratios | `cn=monitor` via LDAP |
 | **Replication** | Agreement status, lag, conflict entries, changes sent | `cn=mapping tree,cn=config` via LDAP |
 | **DNS** | Zone count, record counts, SRV record validation | `cn=dns` via LDAP |
@@ -18,11 +18,11 @@ The extension includes a pre-built overview dashboard and custom topology entiti
 
 Service Health honeycomb with real-time UP/DOWN detection, Bind Security Errors, and LDAP Performance metrics:
 
-![Dashboard — Service Health and LDAP Performance](docs/images/Dynatrace_RHIdM_Default_Dashboard1.png)
+![Dashboard — Service Health and LDAP Performance](documentation/images/Dynatrace_RHIdM_Default_Dashboard1.png)
 
 DNS gauges, SRV record validation, certificate expiry tracking, and total tracked certificates:
 
-![Dashboard — DNS and Certificates](docs/images/Dynatrace_RHIdM_Default_Dashboard2.png)
+![Dashboard — DNS and Certificates](documentation/images/Dynatrace_RHIdM_Default_Dashboard2.png)
 
 ---
 
@@ -75,7 +75,7 @@ The playbook will prompt for:
 
 #### Option B: Manual
 
-If you prefer to configure manually, see [SECURITY_GUIDE.md](SECURITY_GUIDE.md) for step-by-step IPA CLI and LDAP commands.
+If you prefer to configure manually, see [SECURITY_GUIDE.md](documentation/SECURITY_GUIDE.md) for step-by-step IPA CLI and LDAP commands.
 
 #### Create the Monitoring User (if not already created)
 
@@ -287,13 +287,13 @@ When you build and upload a new version:
 
 See the full list of all configuration parameters in the [activationSchema.json](extension/activationSchema.json) file. Each field includes a description and validation constraints.
 
-For detailed information about the monitoring account permissions, Kerberos keytab setup, network requirements, and credential management, see [SECURITY_GUIDE.md](SECURITY_GUIDE.md).
+For detailed information about the monitoring account permissions, Kerberos keytab setup, network requirements, and credential management, see [SECURITY_GUIDE.md](documentation/SECURITY_GUIDE.md).
 
 ---
 
 ## Metrics Reference
 
-See [METRICS_REFERENCE.md](METRICS_REFERENCE.md) for a complete list of all 39 metric keys, their dimensions, meanings, and data sources.
+See [METRICS_REFERENCE.md](documentation/METRICS_REFERENCE.md) for a complete list of all 39 metric keys, their dimensions, meanings, and data sources.
 
 ---
 
@@ -344,7 +344,7 @@ Verify curl has GSSAPI/SPNEGO support:
 curl --version | grep -i GSS
 ```
 
-See [SECURITY_KERBEROS_DESIGN.md](SECURITY_KERBEROS_DESIGN.md) for the full security rationale behind the Kerberos implementation.
+See [SECURITY_KERBEROS_DESIGN.md](documentation/SECURITY_KERBEROS_DESIGN.md) for the full security rationale behind the Kerberos implementation.
 
 ---
 
@@ -408,12 +408,15 @@ freeipa_idm_health/
 │   ├── ldap_collector.py              # LDAP metrics collection
 │   ├── replication_monitor.py         # Replication agreement monitoring
 │   └── service_checker.py            # FreeIPA service status checks
+├── documentation/
+│   ├── INDEX.md                       # Documentation index
+│   ├── METRICS_REFERENCE.md           # Complete metrics documentation
+│   ├── SECURITY_GUIDE.md              # Detailed security and credential guide
+│   ├── SECURITY_KERBEROS_DESIGN.md    # Kerberos implementation design rationale
+│   ├── SERVICE_HEALTH_DESIGN.md       # Service probe strategy and reasoning
+│   └── images/                        # Dashboard screenshots
 ├── setup.py                           # Python package metadata
 ├── setup_idm_monitoring_role.yml      # Ansible playbook for IdM permissions
-├── SECURITY_GUIDE.md                  # Detailed security and credential guide
-├── SECURITY_KERBEROS_DESIGN.md        # Kerberos implementation design rationale
-├── SERVICE_HEALTH_DESIGN.md           # Service probe strategy and reasoning
-├── METRICS_REFERENCE.md               # Complete metrics documentation
 └── .gitignore
 ```
 
