@@ -1,3 +1,5 @@
+import time
+
 from dynatrace_extension import Extension, Status, StatusValue
 
 from . import constants as C
@@ -17,6 +19,8 @@ class FreeIpaExtension(Extension):
         self._ipa_api = None
         self._config = {}
         self._is_local = False
+        self._prev_counters = {}
+        self._prev_timestamp = None
 
     def query(self):
         config = self._load_config()
@@ -192,12 +196,41 @@ class FreeIpaExtension(Extension):
         for metric_key, value in snmp_metrics.items():
             self.report_metric(key=metric_key, value=value, dimensions=base_dims)
 
+        self._compute_load_metrics(monitor_metrics, snmp_metrics, base_dims)
+
         backend_metrics = self._ldap.collect_backend_cache_metrics()
         for backend_data in backend_metrics:
             backend_name = backend_data.pop("backend")
             dims = {**base_dims, "ldap.backend": backend_name}
             for metric_key, value in backend_data.items():
                 self.report_metric(key=metric_key, value=value, dimensions=dims)
+
+    def _compute_load_metrics(self, monitor_metrics, snmp_metrics, base_dims):
+        now = time.time()
+        current = {
+            C.LDAP_ENTRIES_SENT: monitor_metrics.get(C.LDAP_ENTRIES_SENT, 0),
+            C.LDAP_OPS_COMPLETED: monitor_metrics.get(C.LDAP_OPS_COMPLETED, 0),
+            C.LDAP_SEARCH_OPS: snmp_metrics.get(C.LDAP_SEARCH_OPS, 0),
+        }
+
+        if self._prev_timestamp is not None and self._prev_counters:
+            elapsed = now - self._prev_timestamp
+            if elapsed > 0:
+                rate_map = {
+                    C.LDAP_ENTRIES_SENT: C.LDAP_LOAD_ENTRIES_PER_SEC,
+                    C.LDAP_OPS_COMPLETED: C.LDAP_LOAD_OPS_PER_SEC,
+                    C.LDAP_SEARCH_OPS: C.LDAP_LOAD_SEARCH_PER_SEC,
+                }
+                for counter_key, rate_key in rate_map.items():
+                    prev_val = self._prev_counters.get(counter_key, 0)
+                    curr_val = current[counter_key]
+                    delta = curr_val - prev_val
+                    if delta >= 0:
+                        rate = round(delta / elapsed, 2)
+                        self.report_metric(key=rate_key, value=rate, dimensions=base_dims)
+
+        self._prev_counters = current
+        self._prev_timestamp = now
 
     def _collect_replication(self, config, base_dims):
         if self._ldap is None:

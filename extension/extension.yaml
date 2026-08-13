@@ -1,5 +1,5 @@
 name: custom:freeipa-idm-health
-version: 1.0.39
+version: 1.0.45
 minDynatraceVersion: 1.343.0
 author:
   name: "Paul Armstrong (Red Hat)"
@@ -34,6 +34,9 @@ python:
         - key: custom.freeipa.idm.ldap.modify_entry_ops
         - key: custom.freeipa.idm.ldap.remove_entry_ops
         - key: custom.freeipa.idm.ldap.errors
+        - key: custom.freeipa.idm.ldap.load.entries_per_sec
+        - key: custom.freeipa.idm.ldap.load.ops_per_sec
+        - key: custom.freeipa.idm.ldap.load.search_per_sec
         - key: custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio
         - key: custom.freeipa.idm.ldap.backend.entry_cache_count
         - key: custom.freeipa.idm.ldap.backend.entry_cache_size
@@ -196,6 +199,21 @@ metrics:
       displayName: LDAP Errors
       description: "Total LDAP errors"
       unit: Count
+  - key: custom.freeipa.idm.ldap.load.entries_per_sec
+    metadata:
+      displayName: LDAP Entries Sent per Second
+      description: "Rate of LDAP entries returned to clients (derived from entries_sent counter)"
+      unit: PerSecond
+  - key: custom.freeipa.idm.ldap.load.ops_per_sec
+    metadata:
+      displayName: LDAP Operations per Second
+      description: "Rate of LDAP operations completed (derived from ops_completed counter)"
+      unit: PerSecond
+  - key: custom.freeipa.idm.ldap.load.search_per_sec
+    metadata:
+      displayName: LDAP Searches per Second
+      description: "Rate of LDAP search operations (derived from search_ops counter)"
+      unit: PerSecond
   - key: custom.freeipa.idm.ldap.backend.entry_cache_hit_ratio
     metadata:
       displayName: LDAP Entry Cache Hit Ratio
@@ -338,6 +356,8 @@ screens:
           - type: CHART_GROUP
             key: ldap-performance
           - type: CHART_GROUP
+            key: ldap-load
+          - type: CHART_GROUP
             key: ldap-saturation
           - type: CHART_GROUP
             key: ldap-cache
@@ -392,6 +412,35 @@ screens:
                 seriesType: LINE
               metrics:
                 - metricSelector: "custom.freeipa.idm.ldap.bind_security_errors"
+      - key: ldap-load
+        displayName: LDAP Load (Rate of Change)
+        mode: NORMAL
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: Entries Sent / sec
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.load.entries_per_sec"
+          - displayName: Operations / sec
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.load.ops_per_sec"
+          - displayName: Searches / sec
+            visualizationType: GRAPH_CHART
+            graphChartConfig:
+              visualization:
+                themeColor: DEFAULT
+                seriesType: LINE
+              metrics:
+                - metricSelector: "custom.freeipa.idm.ldap.load.search_per_sec"
       - key: ldap-saturation
         displayName: LDAP Thread Saturation
         mode: NORMAL

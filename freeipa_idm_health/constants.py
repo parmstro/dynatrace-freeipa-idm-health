@@ -105,6 +105,11 @@ SRV_RECORDS = [
     "_kpasswd._udp",
 ]
 
+# Derived metrics
+LDAP_LOAD_ENTRIES_PER_SEC = f"{METRIC_PREFIX}.ldap.load.entries_per_sec"
+LDAP_LOAD_OPS_PER_SEC = f"{METRIC_PREFIX}.ldap.load.ops_per_sec"
+LDAP_LOAD_SEARCH_PER_SEC = f"{METRIC_PREFIX}.ldap.load.search_per_sec"
+
 DEFAULT_LDAP_PORT = 636
 DEFAULT_LDAP_TIMEOUT = 10
-DEFAULT_POLLING_INTERVAL = 300
+DEFAULT_POLLING_INTERVAL = 60

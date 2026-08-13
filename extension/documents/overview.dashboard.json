@@ -580,6 +580,29 @@
         }
       }
     },
+    "20": {
+      "davis": {
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      },
+      "query": "timeseries entries = avg(custom.freeipa.idm.ldap.load.entries_per_sec), ops = avg(custom.freeipa.idm.ldap.load.ops_per_sec), searches = avg(custom.freeipa.idm.ldap.load.search_per_sec), by: {freeipa.server}",
+      "queryConfig": {
+        "subQueries": [],
+        "version": 20
+      },
+      "querySettings": {
+        "defaultSamplingRatio": 10,
+        "defaultScanLimitGbytes": 500,
+        "enableSampling": false,
+        "maxResultMegaBytes": 1,
+        "maxResultRecords": 1000
+      },
+      "title": "LDAP Load (entries/sec)",
+      "type": "data",
+      "visualization": "lineChart",
+      "visualizationSettings": {}
+    },
     "17": {
       "davis": {
         "davisVisualization": {
@@ -712,14 +735,20 @@
     },
     "7": {
       "h": 6,
-      "w": 12,
+      "w": 8,
       "x": 0,
       "y": 16
     },
     "8": {
       "h": 6,
-      "w": 12,
-      "x": 12,
+      "w": 8,
+      "x": 8,
+      "y": 16
+    },
+    "20": {
+      "h": 6,
+      "w": 8,
+      "x": 16,
       "y": 16
     },
     "9": {

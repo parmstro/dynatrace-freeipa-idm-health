@@ -134,7 +134,7 @@
           "description": "How often to collect metrics. Minimum 60 seconds, recommended 300 for entity keepalive.",
           "type": "integer",
           "nullable": false,
-          "default": 300,
+          "default": 60,
           "constraints": [{ "type": "RANGE", "minimum": 60, "maximum": 3600 }]
         }
       }
